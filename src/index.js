@@ -9,6 +9,21 @@ const taskRouter = require('./routers/task')
 const app = express()
 const port = process.env.PORT || 3000
 
+//Middleware
+// app.use((req, res, next) => {
+//     if(req.method === 'GET') {
+//         res.send('GET requests are disabled')
+//     } else {
+//         next()
+//     }
+// })
+
+//Maintenance middleware
+// app.use((req, res, next) => {
+//     res.status(503).send('Website is down for maintenance')
+//     next()
+// })
+
 //Setting up routers
 app.use(express.json())
 app.use(userRouter)
@@ -19,17 +34,14 @@ app.listen(port, () => {
     console.log('Server is up on port ' + port)
 })
 
-const bcrypt = require('bcryptjs')
+// const jwt = require('jsonwebtoken')
 
-const myFunction = async () => {
-    const password = 'Red12345!'
-    const hashedPassword = await bcrypt.hash(password, 8)
+// const myFunction = async () => {
+//     const token = jwt.sign({ _id: '123abc' }, 'thisismynewcourse', { expiresIn:'30 second' })
+//     console.log(token)
 
-    console.log(password)
-    console.log(hashedPassword)
+//     const data = jwt.verify(token, 'thisismynewcourse')
+//     console.log(data)
+// }
 
-    const isMatch = await bcrypt.compare('Red12345!', hashedPassword)
-    console.log(isMatch)
-}
-
-myFunction()
+// myFunction()

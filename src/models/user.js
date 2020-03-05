@@ -2,6 +2,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 //Creating the Schema
 const userSchema = new mongoose.Schema({
@@ -23,6 +24,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+        unique: true,
         trim: true,
         lowercase: true,
         validate(value){
@@ -39,7 +41,13 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Age must be a positive number')
             }
         }
-    }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 })
 
 //Pre function to hash the password before storing
@@ -50,6 +58,30 @@ userSchema.pre('save', async function(next) {
     }
     next()
 })
+
+//Checking email and password for login
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email })
+    if(!user) {
+        throw new Error('Unable to login. Please check email and/or password')
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if(!isMatch){
+        throw new Error('Unable to login. Please check email and/or password')
+    }
+    return user
+}
+
+//Authenticating Web Tokens
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({ _id: user._id.toString() }, 'thisismynewcourse')
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+
+    return token
+}
 
 //Creating User model
 const User = mongoose.model('User', userSchema)
