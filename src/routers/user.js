@@ -1,9 +1,15 @@
 //NPM modules
 const express = require('express')
 const router = new express.Router()
+const multer = require('multer')
 //Required files
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+
+//Configuring Multer
+const upload = multer({
+    dest: 'avatar'
+})
 
 //Create users
 router.post('/users', async (req, res) => {
@@ -85,4 +91,13 @@ router.delete('/users/me', auth, async (req, res) => {
     }
 })
 
+//Upload a profile picture
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) =>{
+    res.send()
+})
+
 module.exports = router
+
+// app.post('/upload', upload.single('upload'), (req, res) => {
+//     res.send()
+// })
