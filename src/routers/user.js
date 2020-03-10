@@ -97,7 +97,3 @@ router.post('/users/me/avatar', upload.single('avatar'), (req, res) =>{
 })
 
 module.exports = router
-
-// app.post('/upload', upload.single('upload'), (req, res) => {
-//     res.send()
-// })
